@@ -11,43 +11,33 @@ const input = [
 	{ name: 'Window', price: 300, date: '2018-05-05' },
 ];
 
-function firstLetterToUpperCase(value) {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-}
+const firstLetterToUpperCase = ([firstLetter, ...rest]) => firstLetter.toUpperCase() + rest.join('');
 
-function plusDollar(value) {
-	return value + '$'; 
-}
+const plusDollar = value => value + '$';
 
-function compare(a, b) {
-	if (a.date < b.date)
+function compare({date: d1}, {date: d2}) {
+	if (d1 < d2)
 		return -1;
-	if (a.date > b.date)
+	if (d1 > d2)
 		return 1;
 	return 0;
 }
 
-function getSortedValuesByDate(values) {
-	return [...values].sort(compare);
-}
+const getSortedValuesByDate = (values, compare) => [...values].sort(compare);
 
-function changePropertiesElement(element) {
-	return Object.assign({}, {
-		name: firstLetterToUpperCase(element.name),
-		price: plusDollar(element.price),
-		date: element.date,
+const changePropertiesElement = (element, changeName, changePrice, changeDate) => ({ 
+		name: changeName(element.name),
+		price: changePrice(element.price),
+		date: changeDate(element.date)
 	});
-}
 
-function getResult(values) {
-	return values.map((element) => changePropertiesElement(element));
-}
+const getResult = (values, changeName, changePrice, changeDate) => values.map((element) => changePropertiesElement(element, changeName, changePrice, changeDate));
 
 function devideOnTwoMassive(values) {
 	const output = values.filter(element => element.date && element.name && element.price);
 	const errors = values.filter(element => !(element.date && element.name && element.price));
-	const sorted = getSortedValuesByDate(output);	
-	const result =  getResult(sorted);
+	const sorted = getSortedValuesByDate(output, compare);	
+	const result =  getResult(sorted, firstLetterToUpperCase, plusDollar, x => x+'p.m.');
 	console.log(result);	
 	// const res = pipe(
  //    	getResult(),
