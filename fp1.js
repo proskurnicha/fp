@@ -1,34 +1,3 @@
-const firstLetterToUpperCase = ([firstLetter, ...rest]) => firstLetter.toUpperCase() + rest.join('');
-
-const plusDollar = value => value + '$';
-
-function compare({date: d1}, {date: d2}) {
-	if (d1 < d2)
-		return -1;
-	if (d1 > d2)
-		return 1;
-	return 0;
-}
-
-const getSortedValuesByDate = (values, compare) => [...values].sort(compare);
-
-const mapItem(item, itemConfig) {
-	// todo: call fn for each props
-}
-
-const changePropertiesElement = (element, {
-	name: nameMap,
-	price: priceMap,
-	date: dateMap
-}) => ({ 
-	name: nameMap(element.name),
-	price: priceMap(element.price),
-	date: dateMap(element.date)
-});	
-
-const map = (arr, fn, config) =>
-	arr.map(element => fn(element, config));
-
 const input = [
 	{ name: 'TV', price: 300, date: '2018-10-10' },
 	{ name: 'laptop', price: 600, date: '2018-10-12' },
@@ -42,11 +11,53 @@ const input = [
 	{ name: 'Window', price: 300, date: '2018-05-05' },
 ];
 
+const firstLetterToUpperCase = ([firstLetter, ...rest]) => firstLetter.toUpperCase() + rest.join('');
+
+const plusDollar = value => value + '$';
+
 const config = {
 	name: firstLetterToUpperCase,
 	price: plusDollar,
 	date: x => x
 }
+
+function compare({date: d1}, {date: d2}) {
+	if (d1 < d2)
+		return -1;
+	if (d1 > d2)
+		return 1;
+	return 0;
+}
+
+const mapItem = (item, itemConfig) => {
+	Object.entries(itemConfig).forEach(function([key, value])  {
+		console.log(key + '		' + value);
+	});
+	// keys.foreach((element) => {
+	// 	сonsole.log(element);
+	// }); 
+	//Object.assign(item, i)
+
+	console.log({...itemConfig});
+	console.log(itemConfig.name(item.name));
+}
+
+mapItem(input[0], config);
+	//  ({ 
+	// 	name: itemConfig.name(item.name),
+	// 	price: itemConfig.price(item.price),
+	// 	date: itemConfig.date(item.date)
+	// });	
+
+const changePropertiesElement = (element, {
+	name: nameMap,
+	price: priceMap,
+	date: dateMap
+}) => ({ 
+	name: nameMap(element.name),
+	price: priceMap(element.price),
+	date: dateMap(element.date)
+});	
 
 const isValid = element => element.date && element.name && element.price;
 
@@ -56,8 +67,8 @@ const transform = (input, config) => {
 	const validatedArr = input.filter(isValid);
 	const errors = input.filter(notValid);
 	const sortedArr = [...validatedArr].sort(compare);	
-	const result = map(sortedArr, changePropertiesElement, config)
-	console.log(result);
+	const result = sortedArr.map(element => changePropertiesElement(element, config));
+	//console.log(result);
 }
 
 transform(input, config);
