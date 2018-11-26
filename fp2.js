@@ -33,14 +33,27 @@ const changeElements = (array, tableLength) => {
     );
 }
 
+const getTableWithNewItem = (tableWithoutItem, position, item, tableLength) => {
+    const part1 = _.slice(tableWithoutItem, 0, position - 1);
+    const part2 = _.slice(tableWithoutItem, position - 1, tableLength*tableLength);
+    return [...part1, item, ...part2];
+}
+
+var curried = _.curryRight(_.reject);
+
 const rearrangeMatrix = (table, newColumn, newRow, item) => {
-    const tableFl = _.flatten(table);
-    const withoutItem = _.reject(tableFl, item);
+    const getTableWithoutItem = _.flow([
+        _.flatten,
+        curried(item)
+    ]);
+    const tableWithoutItem = getTableWithoutItem(table);
+
     const position = getPosition(newColumn, newRow, table.length);
-    const part1 = _.slice(withoutItem, 0, position - 1);
-    const part2 = _.slice(withoutItem, position - 1, tableFl.length);
-    const array = [...part1, item, ...part2];
-    return changeElements(array, table.length);
+
+    const tableWithNewItem  = getTableWithNewItem(tableWithoutItem, position, item, table.length);
+  
+    const result = changeElements(tableWithNewItem, table.length);
+    return _.chunk(result, table.length); 
 }
 
 const newColumn = 0;
